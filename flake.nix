@@ -15,7 +15,7 @@
         let
           go = pkgs.go;
         in
-        {
+        rec {
           devShells.default = pkgs.mkShell {
             packages = [
               pkgs.gnumake
@@ -23,7 +23,7 @@
             ];
           };
 
-          packages.default = pkgs.buildGoModule (finalAttrs: {
+          packages.vt-cli = pkgs.buildGoModule (finalAttrs: {
             inherit go;
 
             pname = "vt-cli";
@@ -60,6 +60,15 @@
               mainProgram = "vt";
             };
           });
+          packages.default = packages.vt-cli;
+
+          apps.vt-cli = {
+            type = "app";
+            program = "${packages.vt-cli}/bin/vt";
+          };
+          apps.default = apps.vt-cli;
+
+          formatter = pkgs.nixfmt-tree;
         };
     };
 }
